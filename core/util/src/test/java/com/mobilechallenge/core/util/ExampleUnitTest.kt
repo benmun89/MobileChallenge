@@ -1,4 +1,4 @@
-package com.mobilechallenge.feature
+package com.mobilechallenge.core.util
 
 import org.junit.Test
 

@@ -15,6 +15,9 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         buildConfigField("String", "LANGUAGE", "\"en\"")
         buildConfigField("String", "API_KEY", "\"\"")
+        buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org\"")
+        buildConfigField("String", "TMDB_IMAGE_ORIGINAL_URL","\"https://image.tmdb.org/t/p/original\""
+        )
     }
 
     buildTypes {
@@ -39,19 +42,24 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:model"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.espresso.core)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.dagger)
-    kapt (libs.dagger.compiler)
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
-    api(libs.bundles.retrofit)
     implementation(libs.retrofit.rx.gson)
     implementation(libs.okhttp.core)
     implementation(libs.okhttp.logging)
+
+    kapt(libs.dagger.compiler)
+    kapt(libs.hilt.compiler)
+
+    api(libs.bundles.retrofit)
+
+    testImplementation(libs.junit)
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

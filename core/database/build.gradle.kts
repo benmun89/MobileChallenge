@@ -33,11 +33,17 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.room.core)
+    implementation(libs.room.paging)
+    implementation(libs.room.runtime)
+
+    api(libs.bundles.retrofit)
+
     testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

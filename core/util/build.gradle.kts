@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.mobilechallenge.feature"
+    namespace = "com.mobilechallenge.core.util"
     compileSdk = 34
 
     defaultConfig {
@@ -33,11 +33,12 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
     testImplementation(libs.junit)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
