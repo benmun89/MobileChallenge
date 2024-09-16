@@ -14,6 +14,8 @@ import com.mobilechallenge.core.domain.GetNowPlayingMoviesUseCase
 import com.mobilechallenge.core.domain.GetPopularMoviesUseCase
 import com.mobilechallenge.core.model.data.MovieModel
 import com.mobilechallenge.core.model.data.mapper.toDomainModel
+import com.mobilechallenge.ui.pagingSource.MovieDataSource
+import com.mobilechallenge.ui.pagingSource.NowPlayingMoviePagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest

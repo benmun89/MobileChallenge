@@ -1,13 +1,13 @@
-package com.mobilechallenge.ui.main
+package com.mobilechallenge.ui.pagingSource
 
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mobilechallenge.core.domain.GetNowPlayingMoviesUseCase
+import com.mobilechallenge.core.domain.GetPopularMoviesUseCase
 import com.mobilechallenge.core.model.data.MovieModel
 
-class NowPlayingMoviePagingSource(
-    private val getPopularMoviesUseCase: GetNowPlayingMoviesUseCase
+class MovieDataSource(
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase
 ) : PagingSource<Int, MovieModel>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieModel> {
@@ -15,7 +15,7 @@ class NowPlayingMoviePagingSource(
         Log.d("MovieDataSource", "Loading page: $page")
         return try {
             val response = getPopularMoviesUseCase.execute(page)
-            Log.d("MovieDataSource", "Loaded ${response.movies.size} items")
+            Log.d("MovieDataSource", "Loaded ${response.movies} items")
             LoadResult.Page(
                 data = response.movies,
                 prevKey = if (page == 1) null else page - 1,

@@ -10,5 +10,8 @@
     <string name="most_popular">Most Popular</string>
     <string name="now_playing">Now Playing</string>
     <string name="add_to_favorites"> Add to favorites</string>
+    <string name="now_playing_toolbar">Now Playing Movies</string>
+    <string name="favorites_toolbar">Favorites Movies</string>
+    <string name="most_popular_toolbar">Most Popular Movies</string>
     <string name="no_favorites_available">No Favorites Available</string>
 </resources>

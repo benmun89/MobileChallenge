@@ -1,4 +1,4 @@
-package com.mobilechallenge.ui.main
+package com.mobilechallenge.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View

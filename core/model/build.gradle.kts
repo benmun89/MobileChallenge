@@ -43,6 +43,8 @@ dependencies {
     implementation(libs.bundles.retrofit)
 
     testImplementation(libs.junit)
+    testImplementation(project(":core:model"))
+    testImplementation(project(":core:model"))
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

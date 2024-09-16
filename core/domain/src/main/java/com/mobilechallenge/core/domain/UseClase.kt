@@ -6,13 +6,6 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 abstract class UseCase<in P, R>(private val coroutineDispatcher: CoroutineDispatcher) {
-
-    /** Executes the use case asynchronously and returns a [Result].
-     *
-     * @return a [Result].
-     *
-     * @param parameters the input parameters to run the use case with
-     */
     suspend operator fun invoke(parameters: P): Result<R> {
         return try {
             withContext(coroutineDispatcher) {

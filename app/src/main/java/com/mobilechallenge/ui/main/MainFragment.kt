@@ -20,6 +20,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.mobilechallenge.R
 import com.mobilechallenge.core.network.utils.NetworkUtils
 import com.mobilechallenge.databinding.FragmentMainBinding
+import com.mobilechallenge.ui.adapter.MovieAdapter
+import com.mobilechallenge.ui.adapter.MovieLoadStateAdapter
 import com.mobilechallenge.ui.details.DetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -73,17 +75,17 @@ class MainFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_now_playing -> {
                 movieViewModel.setMovieListType(MovieListType.NOW_PLAYING)
-                titleChangeListener?.onToolbarTitleChange("Now Playing Movies")
+                titleChangeListener?.onToolbarTitleChange(getString(R.string.now_playing_toolbar))
                 true
             }
             R.id.action_most_popular -> {
                 movieViewModel.setMovieListType(MovieListType.POPULAR)
-                titleChangeListener?.onToolbarTitleChange("Popular Movies")
+                titleChangeListener?.onToolbarTitleChange(getString(R.string.most_popular_toolbar))
                 true
             }
             R.id.action_favorites -> {
                 movieViewModel.setMovieListType(MovieListType.FAVORITES)
-                titleChangeListener?.onToolbarTitleChange("Favorites Movies")
+                titleChangeListener?.onToolbarTitleChange(getString(R.string.favorites_toolbar))
                 binding.swipeRefreshLayout.isEnabled = false
                 true
             }
@@ -105,7 +107,7 @@ class MainFragment : Fragment() {
                 MovieListType.POPULAR -> {
                     binding.swipeRefreshLayout.isEnabled = true
                     movieViewModel.loadPopularMovies()
-                    titleChangeListener?.onToolbarTitleChange("Popular Movies")
+                    titleChangeListener?.onToolbarTitleChange(getString(R.string.most_popular_toolbar))
                 }
                 MovieListType.NOW_PLAYING -> {
                     binding.swipeRefreshLayout.isEnabled = true
