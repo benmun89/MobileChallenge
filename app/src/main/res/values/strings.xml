@@ -7,4 +7,8 @@
     <string name="vote_average">Vote Average:</string>
     <string name="movie_title">Movie Title</string>
     <string name="movie_description">Movie Description</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="add_to_favorites"> Add to favorites</string>
+    <string name="no_favorites_available">No Favorites Available</string>
 </resources>
