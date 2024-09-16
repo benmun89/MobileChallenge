@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.room.runtime)
 
     api(libs.bundles.retrofit)
+    implementation(libs.androidx.espresso.core)
+    implementation(libs.hilt)
 
     testImplementation(libs.junit)
 

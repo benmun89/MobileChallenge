@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.dagger)
     implementation(libs.bundles.retrofit)
+    implementation(project(":core:database"))
 
     testImplementation(libs.junit)
 
