@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.dagger)
+    implementation(libs.androidx.paging.common.android)
 
     testImplementation(libs.junit)
 

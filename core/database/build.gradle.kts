@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    kotlin("kapt")
 }
 
 android {
@@ -39,6 +40,8 @@ dependencies {
     implementation(libs.room.core)
     implementation(libs.room.paging)
     implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
+    implementation("androidx.paging:paging-runtime:3.1.1")
 
     api(libs.bundles.retrofit)
     implementation(libs.androidx.espresso.core)
