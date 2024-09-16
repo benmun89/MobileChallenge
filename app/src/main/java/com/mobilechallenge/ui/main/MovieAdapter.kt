@@ -32,8 +32,8 @@ class MovieAdapter(
             movie?.let {
                 Glide.with(itemView.context)
                     .load("${BuildConfig.TMDB_IMAGE_ORIGINAL_URL}${it.posterPath}")
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .error(R.drawable.ic_launcher_background)
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .centerInside()
                     .into(itemPoster)

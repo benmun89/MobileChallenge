@@ -1,6 +1,7 @@
 package com.mobilechallenge.di
 
 import com.mobilechallenge.core.data.repository.MovieRemoteRepository
+import com.mobilechallenge.core.domain.GetNowPlayingMoviesUseCase
 import com.mobilechallenge.core.domain.GetPopularMoviesUseCase
 import com.mobilechallenge.core.model.data.IoDispatcher
 import dagger.Module
@@ -20,5 +21,14 @@ object UseCaseModule {
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): GetPopularMoviesUseCase {
         return GetPopularMoviesUseCase(movieRemoteRepository, dispatcher)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetNowPlayingMoviesUseCase(
+        movieRemoteRepository: MovieRemoteRepository,
+        @IoDispatcher dispatcher: CoroutineDispatcher
+    ): GetNowPlayingMoviesUseCase {
+        return GetNowPlayingMoviesUseCase(movieRemoteRepository, dispatcher)
     }
 }

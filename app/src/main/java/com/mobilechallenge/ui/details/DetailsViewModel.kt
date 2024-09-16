@@ -1,16 +1,19 @@
 package com.mobilechallenge.ui.details
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mobilechallenge.core.model.data.Movie
+import androidx.lifecycle.viewModelScope
+import com.mobilechallenge.core.data.repository.MovieLocalRepository
 import com.mobilechallenge.core.model.data.MovieModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailsViewModel @Inject constructor() : ViewModel() {
+class DetailsViewModel @Inject constructor(
+    private val movieLocalRepository: MovieLocalRepository
+) : ViewModel() {
 
         private val _selectedMovie = MutableLiveData<MovieModel>()
         val selectedMovie: LiveData<MovieModel> get() = _selectedMovie
@@ -18,4 +21,10 @@ class DetailsViewModel @Inject constructor() : ViewModel() {
         fun selectMovie(movie: MovieModel) {
             _selectedMovie.value = movie
         }
+
+    fun insertMovie(movie: MovieModel) {
+        viewModelScope.launch {
+            movieLocalRepository.insertMovie(movie)
+        }
+    }
 }

@@ -35,12 +35,12 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:database"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.dagger)
     implementation(libs.bundles.retrofit)
-    implementation(project(":core:database"))
 
     testImplementation(libs.junit)
 

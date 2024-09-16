@@ -1,19 +1,21 @@
 package com.mobilechallenge.ui.main
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.mobilechallenge.R
 import com.mobilechallenge.core.network.utils.NetworkUtils
@@ -26,19 +28,34 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
+    interface OnToolbarTitleChangeListener {
+        fun onToolbarTitleChange(title: String)
+    }
+
     private val movieViewModel: MovieViewModel by viewModels()
     private val sharedViewModel: DetailsViewModel by activityViewModels()
-    private lateinit var movieAdapter: MovieAdapter
     private lateinit var binding: FragmentMainBinding
+    private lateinit var movieAdapter: MovieAdapter
     private lateinit var networkUtils: NetworkUtils
-    private val _isNetworkAvailable = MutableLiveData<Boolean>()
-    private val isNetworkAvailable: LiveData<Boolean> get() = _isNetworkAvailable
+    private val isNetworkAvailable = MutableLiveData<Boolean>()
+    private var titleChangeListener: OnToolbarTitleChangeListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        titleChangeListener = context as? OnToolbarTitleChangeListener
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        titleChangeListener = null
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
@@ -48,17 +65,75 @@ class MainFragment : Fragment() {
 
         setupRecyclerView()
         setupSwipeRefresh()
-
         observeNetworkConnectivity()
         checkNetworkAndObserveMovies()
+    }
 
-        isNetworkAvailable.observe(viewLifecycleOwner, Observer { available ->
-            if (available) {
-                observeMovies()
-            } else {
-                showNoInternetSnackbar()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_now_playing -> {
+                movieViewModel.setMovieListType(MovieListType.NOW_PLAYING)
+                titleChangeListener?.onToolbarTitleChange("Now Playing Movies")
+                true
+            }
+            R.id.action_most_popular -> {
+                movieViewModel.setMovieListType(MovieListType.POPULAR)
+                titleChangeListener?.onToolbarTitleChange("Popular Movies")
+                true
+            }
+            R.id.action_favorites -> {
+                movieViewModel.setMovieListType(MovieListType.FAVORITES)
+                titleChangeListener?.onToolbarTitleChange("Favorites Movies")
+                binding.swipeRefreshLayout.isEnabled = false
+                true
+            }
+            R.id.action_toggle_view -> {
+                movieViewModel.toggleViewType()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun observeViewModel() {
+        movieViewModel.isGridView.observe(viewLifecycleOwner, Observer { isGridView ->
+            updateLayoutManager(isGridView)
+        })
+
+        movieViewModel.currentMovieListType.observe(viewLifecycleOwner, Observer { currentListType ->
+            when (currentListType) {
+                MovieListType.POPULAR -> {
+                    binding.swipeRefreshLayout.isEnabled = true
+                    movieViewModel.loadPopularMovies()
+                    titleChangeListener?.onToolbarTitleChange("Popular Movies")
+                }
+                MovieListType.NOW_PLAYING -> {
+                    binding.swipeRefreshLayout.isEnabled = true
+                    movieViewModel.loadNowPlayingMovies()
+                }
+                MovieListType.FAVORITES -> {
+                    binding.swipeRefreshLayout.isEnabled = false
+                    movieViewModel.moviesFromDatabase.observe(viewLifecycleOwner, Observer { pagingData ->
+                        movieAdapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
+                    })
+                }
             }
         })
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            movieViewModel.currentMovieList.asFlow().collectLatest { pagingData ->
+                movieAdapter.submitData(pagingData)
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
+        }
+    }
+
+    private fun updateLayoutManager(isGridView: Boolean) {
+        binding.recyclerView.layoutManager = if (isGridView) {
+            GridLayoutManager(context, 2)
+        } else {
+            LinearLayoutManager(context)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -78,30 +153,13 @@ class MainFragment : Fragment() {
 
     private fun checkNetworkAndObserveMovies() {
         val networkAvailable = networkUtils.isNetworkAvailable()
-        _isNetworkAvailable.value = networkAvailable
+        isNetworkAvailable.value = networkAvailable
 
-        if (!networkAvailable) {
+        if (networkAvailable) {
+            observeViewModel()
+        } else {
             showNoInternetSnackbar()
             binding.swipeRefreshLayout.isRefreshing = false
-        } else {
-            observeMovies()
-        }
-    }
-
-    private fun observeMovies() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            movieViewModel.movies.collectLatest { pagingData ->
-                movieAdapter.submitData(pagingData)
-                binding.swipeRefreshLayout.isRefreshing = false
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            movieAdapter.loadStateFlow.collectLatest { loadStates ->
-                if (loadStates.refresh !is androidx.paging.LoadState.Loading) {
-                    binding.swipeRefreshLayout.isRefreshing = false
-                }
-            }
         }
     }
 
@@ -115,11 +173,18 @@ class MainFragment : Fragment() {
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            if (networkUtils.isNetworkAvailable()) {
-                observeMovies()
-            } else {
-                showNoInternetSnackbar()
-                binding.swipeRefreshLayout.isRefreshing = false
+            when (movieViewModel.getCurrentListType()) {
+                MovieListType.FAVORITES -> {
+                    binding.swipeRefreshLayout.isEnabled = false
+                }
+                MovieListType.POPULAR, MovieListType.NOW_PLAYING -> {
+                    if (networkUtils.isNetworkAvailable()) {
+                        checkNetworkAndObserveMovies()
+                    } else {
+                        showNoInternetSnackbar()
+                        binding.swipeRefreshLayout.isRefreshing = false
+                    }
+                }
             }
         }
     }
@@ -127,7 +192,7 @@ class MainFragment : Fragment() {
     private fun observeNetworkConnectivity() {
         viewLifecycleOwner.lifecycleScope.launch {
             while (true) {
-                _isNetworkAvailable.value = networkUtils.isNetworkAvailable()
+                isNetworkAvailable.value = networkUtils.isNetworkAvailable()
                 kotlinx.coroutines.delay(10000)
             }
         }

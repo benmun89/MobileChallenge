@@ -11,6 +11,5 @@ class GetNowPlayingMoviesUseCase @Inject constructor(
     @IoDispatcher dispatcher: CoroutineDispatcher
 ) : UseCase<Int, MovieResponseModel>(dispatcher) {
 
-    public override suspend fun execute(param: Int) =
-        movieRemoteRepository.getNowPlayingMovie(page = param)
+    public override suspend fun execute(param: Int) = movieRemoteRepository.getNowPlayingMovie(page = param)
 }

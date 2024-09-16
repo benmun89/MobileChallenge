@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -49,6 +50,7 @@ dependencies {
     implementation(project(":core:util"))
     implementation(project(":core:model"))
     implementation(project(":core:data"))
+    implementation(project(":core:database"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.paging)
     implementation(libs.glide)
@@ -69,11 +71,17 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.navigation.fragment)
+    implementation(libs.room.runtime)
+    implementation(libs.room.core)
+    implementation(libs.room.paging)
 
+    kapt(libs.room.compiler)
     kapt(libs.hilt.compiler)
 
     testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation (libs.androidx.lifecycle.livedata.ktx.v261)
+    implementation(libs.kotlinx.coroutines)
 }

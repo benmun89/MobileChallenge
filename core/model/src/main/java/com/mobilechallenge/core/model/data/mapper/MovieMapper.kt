@@ -20,6 +20,24 @@ fun MovieResponseDto.toDomainModel() =
 
 fun DatesDto.toDomainModel() = DatesModel(maximum, minimum)
 
+fun MovieEntity.toDomainModel() = MovieModel(
+    id,
+    adult,
+    backdropPath,
+    genreIds,
+    id,
+    originalLanguage,
+    originalTitle,
+    overview,
+    popularity,
+    posterPath,
+    releaseDate,
+    title,
+    video,
+    voteAverage,
+    voteCount
+)
+
 fun MovieDto.toDomainModel() = MovieModel(
     0,
     adult,
@@ -39,11 +57,10 @@ fun MovieDto.toDomainModel() = MovieModel(
 )
 
 fun MovieModel.toEntity() = MovieEntity(
-    primaryKey,
+    id,
     adult,
     backdropPath,
     genreIds,
-    id,
     originalLanguage,
     originalTitle,
     overview,
@@ -55,5 +72,6 @@ fun MovieModel.toEntity() = MovieEntity(
     voteAverage,
     voteCount
 )
+
 
 

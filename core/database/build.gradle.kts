@@ -40,12 +40,13 @@ dependencies {
     implementation(libs.room.core)
     implementation(libs.room.paging)
     implementation(libs.room.runtime)
-    kapt(libs.room.compiler)
     implementation("androidx.paging:paging-runtime:3.1.1")
-
-    api(libs.bundles.retrofit)
     implementation(libs.androidx.espresso.core)
     implementation(libs.hilt)
+
+    kapt(libs.room.compiler)
+
+    api(libs.bundles.retrofit)
 
     testImplementation(libs.junit)
 
