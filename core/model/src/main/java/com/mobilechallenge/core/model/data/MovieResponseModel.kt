@@ -13,10 +13,10 @@ data class DatesModel(
     val minimum: String?
 )
 
-data class  MovieModel(
+data class MovieModel(
     val primaryKey: Long,
     val adult: Boolean,
-    val backdropPath: String,
+    val backdropPath: String?,
     val genreIds: List<Int>,
     val id: Long,
     val originalLanguage: String,
