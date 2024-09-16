@@ -21,4 +21,16 @@
         android:title="Toggle View"
         android:orderInCategory="400"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_filter_date"
+        android:title="Filter by Date"
+        android:orderInCategory="500"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_filter_name"
+        android:title="Filter by Name"
+        android:orderInCategory="600"
+        app:showAsAction="never" />
+
 </menu>

@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/moviePoster"
                 android:text="@string/movie_title"
-                android:textColor="@android:color/black"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/movieTitle"
                 android:text="@string/movie_description"
-                android:textColor="@android:color/black"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <TextView
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/movieDescription"
                 android:text="@string/genres"
-                android:textColor="@color/dark_gray"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <TextView
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/movieGenres"
                 android:text="@string/popularity"
-                android:textColor="@color/dark_gray"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <TextView
@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/moviePopularity"
                 android:text="@string/release_date"
-                android:textColor="@color/dark_gray"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <TextView
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/movieReleaseDate"
                 android:text="@string/languages"
-                android:textColor="@color/dark_gray"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <TextView
@@ -105,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/movieLanguages"
                 android:text="@string/vote_average"
-                android:textColor="@color/dark_gray"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <com.google.android.material.button.MaterialButton
@@ -117,7 +117,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@color/blue"
                 android:text="@string/add_to_favorites"
-                android:textColor="@android:color/white"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp"
                 app:backgroundTint="@null"
                 app:iconTint="@null" />
