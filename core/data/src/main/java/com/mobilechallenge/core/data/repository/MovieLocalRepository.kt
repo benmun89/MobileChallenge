@@ -9,4 +9,6 @@ interface MovieLocalRepository {
     suspend fun deleteAll()
     suspend fun insertMovie(movieModel: MovieModel)
     fun getAllMovies(): PagingSource<Int, MovieEntity>
+    fun getAllMoviesOrderByName(): PagingSource<Int, MovieEntity>
+    fun getAllmMoviesOrderByDate(): PagingSource<Int, MovieEntity>
 }

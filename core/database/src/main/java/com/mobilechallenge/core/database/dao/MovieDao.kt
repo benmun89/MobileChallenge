@@ -24,4 +24,10 @@ interface MovieDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovie(movie: MovieEntity)
+
+    @Query("SELECT * FROM movie ORDER BY title ASC")
+    fun getAllMoviesOrderedByName():  PagingSource<Int, MovieEntity>
+
+    @Query("SELECT * FROM movie ORDER BY releaseDate ASC")
+    fun getAllMoviesOrderedByDate():  PagingSource<Int, MovieEntity>
 }

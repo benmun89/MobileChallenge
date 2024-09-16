@@ -27,4 +27,12 @@ class MovieLocalRepositoryImpl @Inject constructor(
     override fun getAllMovies(): PagingSource<Int, MovieEntity> {
         return movieDao.getAllMovies()
     }
+
+    override fun getAllMoviesOrderByName(): PagingSource<Int, MovieEntity> {
+        return movieDao.getAllMoviesOrderedByName()
+    }
+
+    override fun getAllmMoviesOrderByDate(): PagingSource<Int, MovieEntity> {
+        return movieDao.getAllMoviesOrderedByDate()
+    }
 }
