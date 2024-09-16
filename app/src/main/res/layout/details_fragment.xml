@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".ui.details.DetailsViewModel">
+
+    <ImageView
+        android:id="@+id/moviePoster"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/movieTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/moviePoster"
+        android:layout_marginTop="16dp"
+        android:text="@string/movie_title"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/movieDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/movieTitle"
+        android:layout_marginTop="8dp"
+        android:text="@string/movie_description"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/movieGenres"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/movieDescription"
+        android:layout_marginTop="16dp"
+        android:text="@string/genres"
+        android:textColor="@color/dark_gray"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/moviePopularity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/movieGenres"
+        android:layout_marginTop="8dp"
+        android:text="@string/popularity"
+        android:textColor="@color/dark_gray"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/movieReleaseDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/moviePopularity"
+        android:layout_marginTop="8dp"
+        android:text="@string/release_date"
+        android:textColor="@color/dark_gray"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/movieLanguages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/movieReleaseDate"
+        android:layout_marginTop="8dp"
+        android:text="@string/languages"
+        android:textColor="@color/dark_gray"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/movieVoteAverage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/movieLanguages"
+        android:layout_marginTop="8dp"
+        android:text="@string/vote_average"
+        android:textColor="@color/dark_gray"
+        android:textSize="16sp" />
+
+</RelativeLayout>
