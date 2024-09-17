@@ -30,4 +30,10 @@ interface MovieDao {
 
     @Query("SELECT * FROM movie ORDER BY releaseDate ASC")
     fun getAllMoviesOrderedByDate():  PagingSource<Int, MovieEntity>
+
+    @Query("DELETE FROM movie WHERE id = :id")
+    suspend fun deleteMovie(id: Long)
+
+    @Query("SELECT COUNT(*) FROM movie WHERE id = :id")
+    suspend fun isMovieInDatabase(id: Long): Int
 }

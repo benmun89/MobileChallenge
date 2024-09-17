@@ -32,7 +32,15 @@ class MovieLocalRepositoryImpl @Inject constructor(
         return movieDao.getAllMoviesOrderedByName()
     }
 
-    override fun getAllmMoviesOrderByDate(): PagingSource<Int, MovieEntity> {
+    override fun getAllMoviesOrderByDate(): PagingSource<Int, MovieEntity> {
         return movieDao.getAllMoviesOrderedByDate()
+    }
+
+    override suspend fun deleteMovie(id: Long) {
+        return movieDao.deleteMovie(id)
+    }
+
+    override suspend fun isMovieInDatabase(id: Long): Boolean {
+        return movieDao.isMovieInDatabase(id) > 0
     }
 }
