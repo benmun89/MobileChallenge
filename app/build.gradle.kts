@@ -78,6 +78,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation (libs.androidx.lifecycle.livedata.ktx.v261)
     implementation(libs.kotlinx.coroutines)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.dagger.hilt.android.testing)
+    implementation(libs.dagger.hilt.android.testing)
 
     kapt(libs.room.compiler)
     kapt(libs.hilt.compiler)
@@ -86,6 +89,10 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation (libs.androidx.espresso.core.v351)
+    androidTestImplementation (libs.androidx.junit.v115)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.hilt.android.testing)
 
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)

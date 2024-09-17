@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -14,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +44,7 @@ class MainFragment : Fragment() {
     private lateinit var networkUtils: NetworkUtils
     private val isNetworkAvailable = MutableLiveData<Boolean>()
     private var titleChangeListener: OnToolbarTitleChangeListener? = null
+    private var savedToolbarTitle: String = ""
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -71,6 +74,7 @@ class MainFragment : Fragment() {
         setupSwipeRefresh()
         observeNetworkConnectivity()
         checkNetworkAndObserveMovies()
+        titleChangeListener?.onToolbarTitleChange(savedToolbarTitle)
     }
 
     private val menuActions = mapOf(
@@ -78,13 +82,15 @@ class MainFragment : Fragment() {
         R.id.action_most_popular to MovieListType.POPULAR,
         R.id.action_favorites to MovieListType.FAVORITES,
         R.id.action_toggle_view to null,
-        R.id.action_filter_date to MovieListType.FILTER_BY_NAME
+        R.id.action_filter_name to MovieListType.FILTER_BY_NAME
     )
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val listType = menuActions[item.itemId]
         if (listType != null) {
             movieViewModel.setMovieListType(listType)
+            val title = getString(listType.toolbarTitle)
+            savedToolbarTitle = title
             titleChangeListener?.onToolbarTitleChange(getString(listType.toolbarTitle))
             if (listType != MovieListType.FAVORITES && listType != MovieListType.FILTER_BY_NAME) {
                 binding.swipeRefreshLayout.isEnabled = true
@@ -101,7 +107,6 @@ class MainFragment : Fragment() {
 
 
     private fun observeViewModel() {
-        titleChangeListener?.onToolbarTitleChange(getString(R.string.most_popular_toolbar))
         if (!movieViewModel.isGridView.hasObservers()) {
             movieViewModel.isGridView.observe(viewLifecycleOwner, Observer { isGridView ->
                 updateLayoutManager(isGridView)
@@ -110,7 +115,6 @@ class MainFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             movieViewModel.currentMovieList.asFlow().collectLatest { pagingData ->
-
                 movieAdapter.submitData(pagingData)
                 binding.swipeRefreshLayout.isRefreshing = false
             }
@@ -123,6 +127,12 @@ class MainFragment : Fragment() {
                     binding.swipeRefreshLayout.isRefreshing = false
 
                 }
+            }
+        }
+        movieAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.Error) {
+
+                showToastOnError((loadState.refresh as LoadState.Error).error)
             }
         }
     }
@@ -208,5 +218,13 @@ class MainFragment : Fragment() {
                 kotlinx.coroutines.delay(10000)
             }
         }
+    }
+
+    private fun showToastOnError(error: Throwable) {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.error_fetching_data),
+            Toast.LENGTH_LONG
+        ).show()
     }
 }

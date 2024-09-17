@@ -1,8 +1,11 @@
 [versions]
 agp = "8.6.0"
+androidxJunit = "1.1.5"
 appcompatVersion = "1.6.1"
 compiler = "4.15.1"
 coreKtxVersion = "1.12.0"
+espressoCoreVersion = "3.5.1"
+hiltAndroid = "2.44"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -37,9 +40,14 @@ androidxArchCore = "2.1.0"
 mockito =  "5.0.0"
 mockitoCore = "4.8.0"
 coroutinestest = "1.7.2"
+hiltAndroidTesting = "2.44"
+junitKtx = "1.2.1"
+hiltAndroidTestingVersion = "2.51.1"
 
 
 [libraries]
+androidx-espresso-core-v351 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
+androidx-junit-v115 = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
 androidx-paging-runtime-v311 = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
 coroutine-test = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref ="coroutinestest"}
 mockito-core-v5120 = { module = "org.mockito:mockito-core", version.ref = "mockitoCoreVersion" }
@@ -49,7 +57,6 @@ mockito-core = {group= "org.mockito", name = "mockito-core", version.ref="mockit
 androix-arch-core = { group= "androidx.arch.core", name ="core-testing", version.ref= "androidxArchCore" }
 androidx-fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 androidx-lifecycle-livedata-ktx-v261 = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofitMock" }
 viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifeCycle" }
 livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifeCycle" }
@@ -86,6 +93,9 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hiltAndroidTesting" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+dagger-hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hiltAndroidTestingVersion" }
 
 [bundles]
 retrofit = [

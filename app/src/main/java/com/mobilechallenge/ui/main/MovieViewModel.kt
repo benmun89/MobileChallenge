@@ -31,80 +31,100 @@ class MovieViewModel @Inject constructor(
     private val movieLocalRepository: MovieLocalRepository
 ) : ViewModel() {
 
-    private val _currentMovieListType = MutableLiveData<MovieListType>(MovieListType.POPULAR)
+    private val _currentMovieListType = MutableLiveData(MovieListType.POPULAR)
     val currentMovieListType: LiveData<MovieListType> get() = _currentMovieListType
 
-    private var currentListType: MovieListType = MovieListType.POPULAR
     private val _moviesFromDatabase = MutableLiveData<PagingData<MovieModel>>()
     val moviesFromDatabase: LiveData<PagingData<MovieModel>> get() = _moviesFromDatabase
 
     private val _currentMovieList = MutableLiveData<PagingData<MovieModel>>()
     val currentMovieList: LiveData<PagingData<MovieModel>> get() = _currentMovieList
 
-    private val _isGridView = MutableLiveData<Boolean>(true)
+    private val _isGridView = MutableLiveData(true)
     val isGridView: LiveData<Boolean> get() = _isGridView
+
+    private val _error = MutableLiveData<String>()
 
     init {
         loadMoviesForCurrentType()
     }
 
-    fun loadPopularMovies() {
+    private fun loadPopularMovies() {
         viewModelScope.launch {
-            createPopularMoviesFlow().collect {
-                _currentMovieList.postValue(it)
-            }
-        }
-    }
-
-    fun loadNowPlayingMovies() {
-        viewModelScope.launch {
-            createNowPlayingMoviesFlow().collect {
-                _currentMovieList.postValue(it)
-            }
-        }
-    }
-
-    fun loadFavoriteMovies() {
-        viewModelScope.launch {
-            Pager(
-                config = PagingConfig(
-                    pageSize = 20,
-                    enablePlaceholders = false
-                ),
-                pagingSourceFactory = { movieLocalRepository.getAllMovies() }
-            ).flow
-                .map { pagingData -> pagingData.map { it.toDomainModel() } }
-                .cachedIn(viewModelScope)
-                .collectLatest { pagingData ->
-                    _moviesFromDatabase.postValue(pagingData)
+            try {
+                createPopularMoviesFlow().collectLatest { pagingData ->
+                    _currentMovieList.value = pagingData
                 }
+            } catch (e: Exception) {
+                _error.value = "Failed to load popular movies. Please try again later."
+            }
+        }
+    }
+
+    private fun loadNowPlayingMovies() {
+        viewModelScope.launch {
+            try {
+                createNowPlayingMoviesFlow().collectLatest { pagingData ->
+                    _currentMovieList.value = pagingData
+                }
+            } catch (e: Exception) {
+                _error.value = "Failed to load now playing movies. Please try again later."
+            }
+        }
+    }
+
+    private fun loadFavoriteMovies() {
+        viewModelScope.launch {
+            try {
+                Pager(
+                    config = PagingConfig(
+                        pageSize = 20,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = { movieLocalRepository.getAllMovies() }
+                ).flow
+                    .map { pagingData -> pagingData.map { it.toDomainModel() } }
+                    .cachedIn(viewModelScope)
+                    .collectLatest { pagingData ->
+                        _moviesFromDatabase.value = pagingData
+                    }
+            } catch (e: Exception) {
+                _error.value = "Failed to load favorite movies. Please try again later."
+            }
         }
     }
 
     fun filterFavoriteMoviesByName() {
         viewModelScope.launch {
-            Pager(
-                config = PagingConfig(
-                    pageSize = 20,
-                    enablePlaceholders = false
-                ),
-                pagingSourceFactory = { movieLocalRepository.getAllMoviesOrderByName() }
-            ).flow
-                .map { pagingData -> pagingData.map { it.toDomainModel() } }
-                .cachedIn(viewModelScope)
-                .collectLatest { pagingData ->
-                    _moviesFromDatabase.postValue(pagingData)
-                }
+            try {
+                Pager(
+                    config = PagingConfig(
+                        pageSize = 20,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = { movieLocalRepository.getAllMoviesOrderByName() }
+                ).flow
+                    .map { pagingData -> pagingData.map { it.toDomainModel() } }
+                    .cachedIn(viewModelScope)
+                    .collectLatest { pagingData ->
+                        _moviesFromDatabase.value = pagingData
+                    }
+            } catch (e: Exception) {
+                _error.value = "Failed to filter favorite movies. Please try again later."
+            }
         }
     }
 
+    private val movieListLoaders = mapOf(
+        MovieListType.POPULAR to ::loadPopularMovies,
+        MovieListType.NOW_PLAYING to ::loadNowPlayingMovies,
+        MovieListType.FAVORITES to ::loadFavoriteMovies,
+        MovieListType.FILTER_BY_NAME to ::filterFavoriteMoviesByName
+    )
+
     private fun loadMoviesForCurrentType() {
-        when (_currentMovieListType.value) {
-            MovieListType.POPULAR -> loadPopularMovies()
-            MovieListType.NOW_PLAYING -> loadNowPlayingMovies()
-            MovieListType.FAVORITES -> loadFavoriteMovies()
-            MovieListType.FILTER_BY_NAME -> filterFavoriteMoviesByName()
-            null -> TODO()
+        _currentMovieListType.value?.let { type ->
+            movieListLoaders[type]?.invoke()
         }
     }
 
@@ -128,18 +148,13 @@ class MovieViewModel @Inject constructor(
         ).flow.cachedIn(viewModelScope)
     }
 
-    fun setMovieListType(type: MovieListType) {
-        _currentMovieListType.value = type
-        when (type) {
-            MovieListType.POPULAR -> loadPopularMovies()
-            MovieListType.NOW_PLAYING -> loadNowPlayingMovies()
-            MovieListType.FAVORITES -> loadFavoriteMovies()
-            MovieListType.FILTER_BY_NAME -> filterFavoriteMoviesByName()
-        }
+    fun setMovieListType(type: MovieListType?) {
+        _currentMovieListType.value = type ?: return
+        movieListLoaders[type]?.invoke()
     }
 
     fun getCurrentListType(): MovieListType {
-        return currentListType
+        return _currentMovieListType.value ?: MovieListType.POPULAR
     }
 
     fun toggleViewType() {

@@ -3,34 +3,29 @@
 
     <item
         android:id="@+id/action_most_popular"
-        android:title="Most Popular"
+        android:title="@string/most_popular"
         android:orderInCategory="100"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_now_playing"
-        android:title="Now Playing"
+        android:title="@string/now_playing"
         android:orderInCategory="200"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_favorites"
-        android:title="Favorites"
+        android:title="@string/favorites"
         android:orderInCategory="300"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_toggle_view"
-        android:title="Toggle View"
+        android:title="@string/toggle_view"
         android:orderInCategory="400"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_filter_date"
-        android:title="Filter by Date"
-        android:orderInCategory="500"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_filter_name"
-        android:title="Filter by Name"
-        android:orderInCategory="600"
+        android:title="@string/filter_by_name"
+        android:orderInCategory="500"
         app:showAsAction="never" />
 
 </menu>
