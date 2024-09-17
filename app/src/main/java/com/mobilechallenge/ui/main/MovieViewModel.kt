@@ -114,17 +114,16 @@ class MovieViewModel @Inject constructor(
             }
         }
     }
-
-    private val movieListLoaders = mapOf(
-        MovieListType.POPULAR to ::loadPopularMovies,
-        MovieListType.NOW_PLAYING to ::loadNowPlayingMovies,
-        MovieListType.FAVORITES to ::loadFavoriteMovies,
-        MovieListType.FILTER_BY_NAME to ::filterFavoriteMoviesByName
-    )
-
     private fun loadMoviesForCurrentType() {
-        _currentMovieListType.value?.let { type ->
-            movieListLoaders[type]?.invoke()
+        when (_currentMovieListType.value) {
+            MovieListType.POPULAR -> loadPopularMovies()
+            MovieListType.NOW_PLAYING -> loadNowPlayingMovies()
+            MovieListType.FAVORITES -> loadFavoriteMovies()
+            MovieListType.FILTER_BY_NAME -> filterFavoriteMoviesByName()
+            null -> {
+                _error.value = "Movie list type is null, loading popular movies by default"
+                loadPopularMovies()
+            }
         }
     }
 
@@ -148,9 +147,14 @@ class MovieViewModel @Inject constructor(
         ).flow.cachedIn(viewModelScope)
     }
 
-    fun setMovieListType(type: MovieListType?) {
-        _currentMovieListType.value = type ?: return
-        movieListLoaders[type]?.invoke()
+    fun setMovieListType(type: MovieListType) {
+        _currentMovieListType.value = type
+        when (type) {
+            MovieListType.POPULAR -> loadPopularMovies()
+            MovieListType.NOW_PLAYING -> loadNowPlayingMovies()
+            MovieListType.FAVORITES -> loadFavoriteMovies()
+            MovieListType.FILTER_BY_NAME -> filterFavoriteMoviesByName()
+        }
     }
 
     fun getCurrentListType(): MovieListType {
