@@ -1,6 +1,7 @@
 [versions]
 agp = "8.6.0"
 appcompatVersion = "1.6.1"
+compiler = "4.15.1"
 coreKtxVersion = "1.12.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -13,7 +14,7 @@ material = "1.12.0"
 activity = "1.9.2"
 constraintlayout = "2.1.4"
 retrofit = "2.11.0"
-glide = "4.16.0"
+glide = "4.15.1"
 dagger = "2.52"
 room = "2.6.1"
 okhttp = "4.12.0"
@@ -28,10 +29,12 @@ navigationUiKtx = "2.8.0"
 navigationFragment = "2.8.0"
 pagingCommonAndroid = "3.3.2"
 coroutines = "1.8.0"
+lifecycleViewmodelKtx = "2.6.2"
 
 [libraries]
 androidx-fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 androidx-lifecycle-livedata-ktx-v261 = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifeCycle" }
 livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifeCycle" }
 androidx-appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
@@ -66,6 +69,7 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 
 [bundles]
 retrofit = [
