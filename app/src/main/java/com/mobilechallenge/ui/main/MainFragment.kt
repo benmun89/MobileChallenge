@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.mobilechallenge.R
 import com.mobilechallenge.core.network.utils.NetworkUtils
@@ -50,7 +51,9 @@ class MainFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         titleChangeListener = null
+        movieViewModel.isGridView.removeObservers(viewLifecycleOwner)
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,78 +67,73 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         networkUtils = NetworkUtils(requireContext())
-
         setupRecyclerView()
         setupSwipeRefresh()
         observeNetworkConnectivity()
         checkNetworkAndObserveMovies()
     }
 
+    private val menuActions = mapOf(
+        R.id.action_now_playing to MovieListType.NOW_PLAYING,
+        R.id.action_most_popular to MovieListType.POPULAR,
+        R.id.action_favorites to MovieListType.FAVORITES,
+        R.id.action_toggle_view to null,
+        R.id.action_filter_date to MovieListType.FILTER_BY_NAME
+    )
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_now_playing -> {
-                movieViewModel.setMovieListType(MovieListType.NOW_PLAYING)
-                titleChangeListener?.onToolbarTitleChange(getString(R.string.now_playing_toolbar))
-                true
+        val listType = menuActions[item.itemId]
+        if (listType != null) {
+            movieViewModel.setMovieListType(listType)
+            titleChangeListener?.onToolbarTitleChange(getString(listType.toolbarTitle))
+            if (listType != MovieListType.FAVORITES && listType != MovieListType.FILTER_BY_NAME) {
+                binding.swipeRefreshLayout.isEnabled = true
+
             }
-            R.id.action_most_popular -> {
-                movieViewModel.setMovieListType(MovieListType.POPULAR)
-                titleChangeListener?.onToolbarTitleChange(getString(R.string.most_popular_toolbar))
-                true
-            }
-            R.id.action_favorites -> {
-                movieViewModel.setMovieListType(MovieListType.FAVORITES)
-                titleChangeListener?.onToolbarTitleChange(getString(R.string.favorites_toolbar))
-                binding.swipeRefreshLayout.isEnabled = false
-                true
-            }
-            R.id.action_toggle_view -> {
-                movieViewModel.toggleViewType()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+            return true
+        } else if (item.itemId == R.id.action_toggle_view) {
+            movieViewModel.toggleViewType()
+            return true
         }
+        return super.onOptionsItemSelected(item)
     }
 
-    private fun observeViewModel() {
-        movieViewModel.isGridView.observe(viewLifecycleOwner, Observer { isGridView ->
-            updateLayoutManager(isGridView)
-        })
 
-        movieViewModel.currentMovieListType.observe(viewLifecycleOwner, Observer { currentListType ->
-            when (currentListType) {
-                MovieListType.POPULAR -> {
-                    binding.swipeRefreshLayout.isEnabled = true
-                    movieViewModel.loadPopularMovies()
-                    titleChangeListener?.onToolbarTitleChange(getString(R.string.most_popular_toolbar))
-                }
-                MovieListType.NOW_PLAYING -> {
-                    binding.swipeRefreshLayout.isEnabled = true
-                    movieViewModel.loadNowPlayingMovies()
-                }
-                MovieListType.FAVORITES -> {
-                    binding.swipeRefreshLayout.isEnabled = false
-                    movieViewModel.moviesFromDatabase.observe(viewLifecycleOwner, Observer { pagingData ->
-                        movieAdapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
-                    })
-                }
-            }
-        })
+
+    private fun observeViewModel() {
+        titleChangeListener?.onToolbarTitleChange(getString(R.string.most_popular_toolbar))
+        if (!movieViewModel.isGridView.hasObservers()) {
+            movieViewModel.isGridView.observe(viewLifecycleOwner, Observer { isGridView ->
+                updateLayoutManager(isGridView)
+            })
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             movieViewModel.currentMovieList.asFlow().collectLatest { pagingData ->
+
                 movieAdapter.submitData(pagingData)
                 binding.swipeRefreshLayout.isRefreshing = false
+            }
+        }
+
+        movieViewModel.currentMovieListType.observe(viewLifecycleOwner) { currentListType ->
+            if (currentListType == MovieListType.FAVORITES) {
+                movieViewModel.moviesFromDatabase.observe(viewLifecycleOwner) { pagingData ->
+                    movieAdapter.submitData(viewLifecycleOwner.lifecycle, pagingData)
+                    binding.swipeRefreshLayout.isRefreshing = false
+
+                }
             }
         }
     }
 
     private fun updateLayoutManager(isGridView: Boolean) {
-        binding.recyclerView.layoutManager = if (isGridView) {
-            GridLayoutManager(context, 2)
+        val layoutManager = if (isGridView) {
+            GridLayoutManager(requireContext(), 2)
         } else {
-            LinearLayoutManager(context)
+            LinearLayoutManager(requireContext())
         }
+        binding.recyclerView.layoutManager = layoutManager
     }
 
     private fun setupRecyclerView() {
@@ -151,6 +149,11 @@ class MainFragment : Fragment() {
                 footer = MovieLoadStateAdapter { movieAdapter.retry() }
             )
         }
+        movieAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                super.onChanged()
+            }
+        })
     }
 
     private fun checkNetworkAndObserveMovies() {
@@ -160,14 +163,15 @@ class MainFragment : Fragment() {
         if (networkAvailable) {
             observeViewModel()
         } else {
-            showNoInternetSnackbar()
+            showNoInternetSnackBar()
             binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
-    private fun showNoInternetSnackbar() {
-        Snackbar.make(requireView(), "No Internet Connection", Snackbar.LENGTH_LONG)
-            .setAction("Retry") {
+    private fun showNoInternetSnackBar() {
+        Snackbar.make(requireView(),
+            getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG)
+            .setAction(getString(R.string.retry)) {
                 checkNetworkAndObserveMovies()
             }
             .show()
@@ -179,13 +183,19 @@ class MainFragment : Fragment() {
                 MovieListType.FAVORITES -> {
                     binding.swipeRefreshLayout.isEnabled = false
                 }
+
                 MovieListType.POPULAR, MovieListType.NOW_PLAYING -> {
                     if (networkUtils.isNetworkAvailable()) {
                         checkNetworkAndObserveMovies()
                     } else {
-                        showNoInternetSnackbar()
+                        showNoInternetSnackBar()
                         binding.swipeRefreshLayout.isRefreshing = false
                     }
+                }
+
+                MovieListType.FILTER_BY_NAME -> {
+                    showNoInternetSnackBar()
+                    binding.swipeRefreshLayout.isRefreshing = false
                 }
             }
         }

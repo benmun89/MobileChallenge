@@ -19,11 +19,11 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white"
-            android:titleTextColor="@android:color/black"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight">
+            style="@style/CustomToolbarStyle"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight" >
 
             <TextView
                 android:id="@+id/toolbar_title"
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
-                android:layout_gravity="right"/>
+                android:layout_gravity="end"/>
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

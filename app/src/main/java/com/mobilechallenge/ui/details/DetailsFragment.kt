@@ -1,22 +1,16 @@
 package com.mobilechallenge.ui.details
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.google.android.material.snackbar.Snackbar
 import com.mobilechallenge.R
+import com.mobilechallenge.core.model.data.MovieModel
 import com.mobilechallenge.core.network.BuildConfig
 import com.mobilechallenge.databinding.DetailsFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailsFragment : Fragment() {
@@ -37,46 +31,17 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         detailsViewModel.selectedMovie.observe(viewLifecycleOwner) { movie ->
-            if (movie != null) {
-
-                binding.movieTitle.text = movie.title
-                binding.movieDescription.text = movie.overview
-                binding.movieGenres.text = "Genres: ${movie.genreIds.joinToString(", ")}"
-                binding.moviePopularity.text = "Popularity: ${movie.popularity}"
-                binding.movieReleaseDate.text = "Release Date: ${movie.releaseDate}"
-                binding.movieLanguages.text = "Languages: ${movie.originalLanguage}"
-                binding.movieVoteAverage.text = "Vote Average: ${movie.voteAverage}"
-
-
-                Glide.with(this)
-                    .load("${BuildConfig.TMDB_IMAGE_ORIGINAL_URL}${movie.posterPath}")
-                    .into(binding.moviePoster)
-
-                Glide.with(this)
-                    .load("${BuildConfig.TMDB_IMAGE_ORIGINAL_URL}${movie.backdropPath}")
-                    .into(binding.backgroundImage)
-
-                binding.addToFavoritesButton.setOnClickListener {
-                    movie.let { selectedMovie ->
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            try {
-                                detailsViewModel.insertMovie(selectedMovie)
-                                Snackbar.make(
-                                    binding.root,
-                                    "Movie added to favorites!",
-                                    Snackbar.LENGTH_SHORT
-                                ).show()
-                            } catch (e: Exception) {
-                                Snackbar.make(
-                                    binding.root,
-                                    "Failed to add movie to favorites.",
-                                    Snackbar.LENGTH_LONG
-                                ).show()
-                            }
-                        }
-                    }
-                }
+            movie?.let {
+                bindMovieData(movie)
             }
+        }
+
+        detailsViewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
+            updateFavoriteButton(isFavorite)
+        }
+
+        binding.favoriteToggleButton.setOnClickListener {
+            detailsViewModel.toggleFavoriteMovie()
         }
     }
 
@@ -86,5 +51,31 @@ class DetailsFragment : Fragment() {
             item.isVisible = false
         }
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun bindMovieData(movie: MovieModel) {
+        binding.movieTitle.text = movie.title
+        binding.movieDescription.text = movie.overview
+        binding.movieGenres.text = getString(R.string.genres_format, movie.genreIds.joinToString(", "))
+        binding.moviePopularity.text = getString(R.string.popularity_format, movie.popularity.toString())
+        binding.movieReleaseDate.text = getString(R.string.release_date_format, movie.releaseDate)
+        binding.movieLanguages.text = getString(R.string.languages_format, movie.originalLanguage)
+        binding.movieVoteAverage.text = getString(R.string.vote_average_format, movie.voteAverage.toString())
+
+        Glide.with(this)
+            .load("${BuildConfig.TMDB_IMAGE_ORIGINAL_URL}${movie.posterPath}")
+            .placeholder(R.drawable.ic_launcher_foreground)
+            .error(R.drawable.ic_launcher_foreground)
+            .into(binding.moviePoster)
+
+        Glide.with(this)
+            .load("${BuildConfig.TMDB_IMAGE_ORIGINAL_URL}${movie.backdropPath}")
+            .placeholder(R.drawable.ic_launcher_foreground)
+            .error(R.drawable.ic_launcher_foreground)
+            .into(binding.backgroundImage)
+    }
+
+    private fun updateFavoriteButton(isFavorite: Boolean) {
+        binding.favoriteToggleButton.text = if (isFavorite) "Remove from Favorites" else "Add to Favorites"
     }
 }

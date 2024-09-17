@@ -1,7 +1,6 @@
 package com.mobilechallenge.core.data.repository
 
 
-import com.mobilechallenge.core.database.model.MovieEntity
 import com.mobilechallenge.core.model.data.MovieResponseModel
 import com.mobilechallenge.core.model.data.mapper.toDomainModel
 import com.mobilechallenge.core.network.api.MovieApi
@@ -18,7 +17,5 @@ class MovieRemoteRepositoryImpl @Inject constructor(
 
     override suspend fun getMostPopularMovie(page: Int): MovieResponseModel =
         movieApi.getMostPopularMovie(page).await().toDomainModel()
-
-
 }
 

@@ -62,4 +62,9 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    testImplementation (libs.junit)
+    testImplementation (libs.mockito.core.v5120)
+    testImplementation (libs.mockito.inline)
+    testImplementation (libs.retrofit.mock)
 }

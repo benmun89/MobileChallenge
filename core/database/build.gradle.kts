@@ -40,7 +40,7 @@ dependencies {
     implementation(libs.room.core)
     implementation(libs.room.paging)
     implementation(libs.room.runtime)
-    implementation("androidx.paging:paging-runtime:3.1.1")
+    implementation(libs.androidx.paging.runtime.v311)
     implementation(libs.androidx.espresso.core)
     implementation(libs.hilt)
 

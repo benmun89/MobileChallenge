@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
-
 }
 
 android {
@@ -74,6 +73,11 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.core)
     implementation(libs.room.paging)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation (libs.androidx.lifecycle.livedata.ktx.v261)
+    implementation(libs.kotlinx.coroutines)
 
     kapt(libs.room.compiler)
     kapt(libs.hilt.compiler)
@@ -82,6 +86,12 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation (libs.androidx.lifecycle.livedata.ktx.v261)
-    implementation(libs.kotlinx.coroutines)
+
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.androidx.core.ktx)
+    testImplementation(libs.androix.arch.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.coroutine.test)
 }

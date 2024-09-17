@@ -12,12 +12,11 @@ class MovieDataSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieModel> {
         val page = params.key ?: 1
-        Log.d("MovieDataSource", "Loading page: $page")
         return try {
             val response = getPopularMoviesUseCase.execute(page)
-            Log.d("MovieDataSource", "Loaded ${response.movies} items")
+            val movies = response.movies
             LoadResult.Page(
-                data = response.movies,
+                data = movies,
                 prevKey = if (page == 1) null else page - 1,
                 nextKey = if (response.page >= response.totalPages) null else page + 1
             )

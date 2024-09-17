@@ -36,6 +36,9 @@ android {
 
 dependencies {
     implementation(project(":core:database"))
+    testImplementation(project(":core:model"))
+    testImplementation(project(":core:model"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -43,8 +46,6 @@ dependencies {
     implementation(libs.bundles.retrofit)
 
     testImplementation(libs.junit)
-    testImplementation(project(":core:model"))
-    testImplementation(project(":core:model"))
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

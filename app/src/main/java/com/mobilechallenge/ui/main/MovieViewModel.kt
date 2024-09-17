@@ -9,6 +9,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.mobilechallenge.R
 import com.mobilechallenge.core.data.repository.MovieLocalRepository
 import com.mobilechallenge.core.domain.GetNowPlayingMoviesUseCase
 import com.mobilechallenge.core.domain.GetPopularMoviesUseCase
@@ -30,7 +31,7 @@ class MovieViewModel @Inject constructor(
     private val movieLocalRepository: MovieLocalRepository
 ) : ViewModel() {
 
-    private val _currentMovieListType = MutableLiveData<MovieListType>(MovieListType.POPULAR) // Default to Popular
+    private val _currentMovieListType = MutableLiveData<MovieListType>(MovieListType.POPULAR)
     val currentMovieListType: LiveData<MovieListType> get() = _currentMovieListType
 
     private var currentListType: MovieListType = MovieListType.POPULAR
@@ -40,11 +41,28 @@ class MovieViewModel @Inject constructor(
     private val _currentMovieList = MutableLiveData<PagingData<MovieModel>>()
     val currentMovieList: LiveData<PagingData<MovieModel>> get() = _currentMovieList
 
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean> get() = _loading
-
     private val _isGridView = MutableLiveData<Boolean>(true)
     val isGridView: LiveData<Boolean> get() = _isGridView
+
+    init {
+        loadMoviesForCurrentType()
+    }
+
+    fun loadPopularMovies() {
+        viewModelScope.launch {
+            createPopularMoviesFlow().collect {
+                _currentMovieList.postValue(it)
+            }
+        }
+    }
+
+    fun loadNowPlayingMovies() {
+        viewModelScope.launch {
+            createNowPlayingMoviesFlow().collect {
+                _currentMovieList.postValue(it)
+            }
+        }
+    }
 
     fun loadFavoriteMovies() {
         viewModelScope.launch {
@@ -63,15 +81,20 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    init {
-        loadMoviesForCurrentType()
-    }
-
-    fun loadPopularMovies() {
+    fun filterFavoriteMoviesByName() {
         viewModelScope.launch {
-            createPopularMoviesFlow().collect {
-                _currentMovieList.postValue(it)
-            }
+            Pager(
+                config = PagingConfig(
+                    pageSize = 20,
+                    enablePlaceholders = false
+                ),
+                pagingSourceFactory = { movieLocalRepository.getAllMoviesOrderByName() }
+            ).flow
+                .map { pagingData -> pagingData.map { it.toDomainModel() } }
+                .cachedIn(viewModelScope)
+                .collectLatest { pagingData ->
+                    _moviesFromDatabase.postValue(pagingData)
+                }
         }
     }
 
@@ -80,15 +103,8 @@ class MovieViewModel @Inject constructor(
             MovieListType.POPULAR -> loadPopularMovies()
             MovieListType.NOW_PLAYING -> loadNowPlayingMovies()
             MovieListType.FAVORITES -> loadFavoriteMovies()
+            MovieListType.FILTER_BY_NAME -> filterFavoriteMoviesByName()
             null -> TODO()
-        }
-    }
-
-    fun loadNowPlayingMovies() {
-        viewModelScope.launch {
-            createNowPlayingMoviesFlow().collect {
-                _currentMovieList.postValue(it)
-            }
         }
     }
 
@@ -118,6 +134,7 @@ class MovieViewModel @Inject constructor(
             MovieListType.POPULAR -> loadPopularMovies()
             MovieListType.NOW_PLAYING -> loadNowPlayingMovies()
             MovieListType.FAVORITES -> loadFavoriteMovies()
+            MovieListType.FILTER_BY_NAME -> filterFavoriteMoviesByName()
         }
     }
 
@@ -130,8 +147,9 @@ class MovieViewModel @Inject constructor(
     }
 }
 
-enum class MovieListType {
-    POPULAR,
-    NOW_PLAYING,
-    FAVORITES
+enum class MovieListType(val toolbarTitle: Int) {
+    POPULAR(R.string.most_popular_toolbar),
+    NOW_PLAYING(R.string.now_playing_toolbar),
+    FAVORITES(R.string.favorites_toolbar),
+    FILTER_BY_NAME(R.string.filter_by_name_toolbar)
 }

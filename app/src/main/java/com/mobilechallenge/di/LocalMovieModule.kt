@@ -13,5 +13,4 @@ interface LocalMovieModule {
 
     @Binds
     fun provideLocalRepository(localRepositoryImpl: MovieLocalRepositoryImpl): MovieLocalRepository
-
 }

@@ -8,7 +8,6 @@ import com.mobilechallenge.core.model.data.MovieModel
 import com.mobilechallenge.core.model.data.MovieResponseDto
 import com.mobilechallenge.core.model.data.MovieResponseModel
 
-
 fun MovieResponseDto.toDomainModel() =
     MovieResponseModel(
         dates?.toDomainModel(),
